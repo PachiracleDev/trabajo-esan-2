@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+void contar_hasta(int numero) {
+    for (int i = 1; i <= numero; i++) {
+        // Para ver la salida en la consola, puedes descomentar la siguiente línea:
+        // printf("Proceso %d contando: %d\n", getpid(), i);
+    }
+}
+
+int main() {
+    pid_t pid;
+    for (int i = 0; i < 3; i++) {
+        pid = fork();  // Crear un nuevo proceso
+        if (pid < 0) {
+            perror("Fork falló");
+            exit(1);
+
+        } else if (pid == 0) {
+            // Proceso hijo
+            printf("Un proceso hijo con PID %d y cuento hasta 1000.\n", getpid());
+            contar_hasta(1000);
+            sleep(10);  // Pausa el proceso hijo por 1 segundo
+            printf("Un Proceso hijo con PID %d ha terminado.\n", getpid());
+            exit(0);  // Finaliza el proceso hijo
+        }
+    }
+
+    // El proceso padre espera que terminen los hijos
+    for (int i = 0; i < 3; i++) {
+        wait(NULL);  // Esperar hasta que un hijo termine
+
+    }
+   
+    printf("EL proceso padre con PID %d y cree 3 procesos hijos, fin del programa.\n", getpid());
+   
+    return 0;
+}
